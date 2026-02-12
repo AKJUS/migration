@@ -1,103 +1,11 @@
-# Buildkite Migration tool [![Build status](https://badge.buildkite.com/5db82bf94b2c528cb9723cdd222b60baca00c6328265c8427c.svg)](https://buildkite.com/buildkite/migration-tool)
+# Buildkite Migration tool
 
-A tool to help kick start the transition of pipelines from other CI providers to Buildkite.
+**This project has been archived!**
 
-```shell
-$ buildkite-compat examples/circleci/legacy.yml
----
-steps:
-- commands:
-  - "# No need for checkout, the agent takes care of that"
-  - pip install -r requirements/dev.txt
-  plugins:
-  - docker#v5.7.0:
-      image: circleci/python:3.6.2-stretch-browsers
-  agents:
-    executor_type: docker
-  key: build
-```
+This project provided a Ruby-based CLI command, as well as a web service, that could be used to translate CI pipelines to Buildkite from various other vendors. We have now replaced this approach with an AI/LLM-based solution. Using natural language prompts, this solution can convert a broader range of features and patterns that might be provided as input, and making targeted improvements is as simple as updating the prompts. As such, we are archiving this project and it will no longer be maintained.
 
-Note: Setting the environment variable `BUILDKITE_PLUGIN_<UPPERCASE_NAME>_VERSION` will override the default version of the plugins used. For example:
+Our LLM-based conversion tool can be accessed in the following ways:
 
-```shell
-$ BUILDKITE_PLUGIN_DOCKER_VERSION=testing-branch buildkite-compat examples/circleci/legacy.yml
----
-steps:
-- commands:
-  - "# No need for checkout, the agent takes care of that"
-  - pip install -r requirements/dev.txt
-  plugins:
-  - docker#testing-branch:
-      image: circleci/python:3.6.2-stretch-browsers
-  agents:
-    executor_type: docker
-  key: build
-```
-
-## Web Service/API
-
-Buildkite Compat can also be used via a HTTP API using `puma` from the `app` folder of this repository.
-
-You start the web UI with either of the following docker commands:
-
-```sh
-docker compose up webui
-```
-
-Note: If you are using `docker run` you will have to override the entrypoint:
-
-```shell
-$ docker run --rm -ti -p 9292:9292 --entrypoint '' --workdir /app $IMAGE:$TAG puma --port 9292
-```
-
-After that, you can access a simple web interface at http://localhost:9292
-
-![Web UI](docs/images/web-ui.png)
-
-You can also programatically interact with it (maybe even pipe the output directly to `buildkite-agent pipeline upload`!):
-
-```shell
-$ curl -X POST -F 'file=@app/examples/circleci/legacy.yml' http://localhost:9292
----
-steps:
-- commands:
-  - "# No need for checkout, the agent takes care of that"
-  - pip install -r requirements/dev.txt
-  plugins:
-  - docker#v5.7.0:
-      image: circleci/python:3.6.2-stretch-browsers
-  agents:
-    executor_type: docker
-  key: build
-```
-
-## Development
-
-This project supports [mise](https://mise.jdx.dev/) for development environment management. To use mise:
-
-```shell
-# Install mise (if not already installed)
-curl https://mise.run | sh
-
-OR
-
-brew install mise
-
-# Configure mise to respect .ruby-version files
-mise settings add idiomatic_version_file_enable_tools ruby
-
-# Install Ruby version specified in .ruby-version
-mise install
-```
-
-## Translation results
-
-Buildkite has its own suggested best practices, these may differ to those from other providers, check out the [Buildkite Docs](https://buildkite.com/docs) for more information. Review and use the results of this tool as the basis towards Buildkite adoption, the output of the migration tool is a guide and manual editing is likely to be required.
-
-## Further Details
-
-Further information on the currently supported attributes of CI provider pipeline translation to Buildkite pipelines can be found below (within the `/docs` directory):
-
-- [Bitbucket Pipelines](/docs/Bitbucket.md)
-- [CircleCI](/docs/CircleCI.md)
-- [GitHub Actions](/docs/GHA.md)
+* Using our Convert web app at [https://buildkite.com/resources/convert/](https://buildkite.com/resources/convert/).
+* Using the [Buildkite CLI,](https://github.com/buildkite/cli) with its [pipeline convert command](https://buildkite.com/docs/platform/cli/reference/pipeline#convert-pipeline).
+* Or, you can check out our [pipeline conversion rules](https://github.com/buildkite/conversion-rules) and use them with AI agents yourself.
